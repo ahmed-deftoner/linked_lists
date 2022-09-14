@@ -2,7 +2,7 @@ pub struct List {
     head: Link
 }
 
-pub enum Link {
+enum Link {
     Empty,
     More(Box<Node>)
 }
