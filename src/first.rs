@@ -26,4 +26,14 @@ impl List {
         });
         self.head = Link::More(newnode);
     }
+
+    pub fn pop(&mut self) -> Option<i32>{
+        match mem::replace(&mut self.head, Link::Empty) {
+            Link::Empty => None,
+            Link::More(node) => {
+                self.head = node.next;
+                return Some(node.elem);
+            },
+        }
+    }
 }
