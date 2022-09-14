@@ -1,3 +1,5 @@
+use std::mem;
+
 pub struct List {
     head: Link
 }
@@ -13,7 +15,15 @@ struct Node {
 }
 
 impl List {
-    fn new() -> Self {
+    pub fn new() -> Self {
         List { head: Link::Empty }
+    }
+
+    pub fn push(&mut self,item: i32) {
+        let newnode = Box::new(Node{
+            elem: item,
+            next: mem::replace(&mut self.head, Link::Empty)
+        });
+        self.head = Link::More(newnode);
     }
 }
