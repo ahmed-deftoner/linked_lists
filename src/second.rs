@@ -5,6 +5,8 @@ pub struct List<T> {
 
 type Link<T> = Option<Box<Node<T>>>;
 
+pub struct IntoIter<T>(List<T>); 
+
 struct Node<T> {
     elem: T,
     next: Link<T>
@@ -43,6 +45,17 @@ impl<T> List<T> {
         })
     }
 
+    pub fn into_iter(self) -> IntoIter<T>{
+        IntoIter(self)
+    }
+
+}
+
+impl<T> Iterator for IntoIter<T>  {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
+    }
 }
 
 impl<T> Drop for List<T> {
