@@ -20,13 +20,13 @@ impl<T> List<T> {
         List { head: None }
     }
 
-    pub fn prepend(&mut self,item: T) -> List<T> {
-        List { head: Some(Rc::new(Node{
-            elem: item,
+    pub fn prepend(&self, elem: T) -> List<T> {
+        List { head: Some(Rc::new(Node {
+            elem: elem,
             next: self.head.clone(),
         }))}
     }
-
+    
     pub fn tail(&self) -> List<T> {
         List { head: self.head.as_ref().and_then(|node| node.next.clone()) }
     }
@@ -35,28 +35,47 @@ impl<T> List<T> {
         self.head.as_ref().map(|node| &node.elem)
     }
 
-    pub fn pop(&mut self) -> Option<T> {
-        self.head.take().map(|node| {
-            self.head = node.next;
-            node.elem
-        })
-    }
-
-    pub fn peek(&self) -> Option<&T> {
-        self.head.as_ref().map(|node| {
-            &node.elem
-        })
-    }
-
-
-    pub fn peek_mut(&mut self) -> Option<&mut T> {
-        self.head.as_mut().map(|node| {
-            &mut node.elem
-        })
-    }
-
     pub fn iter<'a>(&'a self) -> Iter<'a, T> {
         Iter { next: self.head.as_deref() }
     }
 
+}
+
+impl<'a, T> Iterator for Iter<'a, T>  {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(|node| {
+            self.next = node.next.as_deref();
+            &node.elem
+        })    
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::List;
+
+    #[test]
+    fn basics() {
+        let list = List::new();
+        assert_eq!(list.head(), None);
+
+        let list = list.prepend(1).prepend(2).prepend(3);
+        assert_eq!(list.head(), Some(&3));
+
+        let list = list.tail();
+        assert_eq!(list.head(), Some(&2));
+
+        let list = list.tail();
+        assert_eq!(list.head(), Some(&1));
+
+        let list = list.tail();
+        assert_eq!(list.head(), None);
+
+        // Make sure empty tail works
+        let list = list.tail();
+        assert_eq!(list.head(), None);
+
+    }
 }
