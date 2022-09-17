@@ -26,7 +26,7 @@ impl<T> List<T> {
             next: self.head.clone(),
         }))}
     }
-    
+
     pub fn tail(&self) -> List<T> {
         List { head: self.head.as_ref().and_then(|node| node.next.clone()) }
     }
@@ -51,6 +51,20 @@ impl<'a, T> Iterator for Iter<'a, T>  {
         })    
     }
 }
+
+impl<T> Drop for List<T> {
+    fn drop(&mut self) {
+        let mut head = self.head.take();
+        while let Some(node) = head {
+            if let Ok(mut node) = Rc::try_unwrap(node) {
+                head = node.next.take();
+            } else {
+                break;
+            }
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod test {
