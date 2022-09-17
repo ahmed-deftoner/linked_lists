@@ -7,6 +7,10 @@ type Link<T> = Option<Box<Node<T>>>;
 
 pub struct IntoIter<T>(List<T>); 
 
+pub struct Iter<T> {
+    next: Option<&Node<T>>
+}
+
 struct Node<T> {
     elem: T,
     next: Link<T>
@@ -49,12 +53,28 @@ impl<T> List<T> {
         IntoIter(self)
     }
 
+    pub fn iter(&self) -> Iter<T> {
+        Iter { next: self.head.map(|node| &node) }
+    }
+
 }
 
 impl<T> Iterator for IntoIter<T>  {
     type Item = T;
+
     fn next(&mut self) -> Option<Self::Item> {
         self.0.pop()
+    }
+}
+
+impl<T> Iterator for Iter<T>  {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(|node| {
+            self.next = node.next.map(|node| &node);
+            &&node.elem;
+        })    
     }
 }
 
