@@ -11,6 +11,10 @@ pub struct Iter<'a, T> {
     next: Option<&'a Node<T>>
 }
 
+pub struct IterMut<'a, T> {
+    next: Option<&'a mut Node<T>>
+}
+
 struct Node<T> {
     elem: T,
     next: Link<T>
@@ -57,6 +61,10 @@ impl<T> List<T> {
         Iter { next: self.head.as_deref() }
     }
 
+    pub fn iter_mut<'a>(&'a mut self) -> IterMut<'a, T> {
+        IterMut { next: self.head.as_deref_mut() }
+    }
+
 }
 
 impl<T> Iterator for IntoIter<T>  {
@@ -75,6 +83,17 @@ impl<'a, T> Iterator for Iter<'a, T>  {
             self.next = node.next.as_deref();
             &node.elem
         })    
+    }
+}
+
+impl<'a, T> Iterator for IterMut<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.take().map(|node| {
+            self.next = node.next.as_deref_mut();
+            &node.elem
+        })   
     }
 }
 
