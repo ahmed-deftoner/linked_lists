@@ -30,4 +30,19 @@ impl<T> List<T> {
             tail: None 
         }
     }
+
+    pub fn push_front(&mut self, elem: T) {
+        let new_node = Node::new(elem);
+        match self.head.take() {
+            Some(old_head) => {
+                old_head.borrow_mut().prev = Some(new_node.clone());
+                new_node.borrow_mut().next = Some(old_head);
+                self.head = Some(new_node);
+            },
+            None => {
+                self.head = Some(new_node.clone());
+                self.tail = Some(new_node);
+            }
+        }
+    }
 }
