@@ -12,3 +12,13 @@ struct Node<T> {
     prev: Link<T>,
     next: Link<T>
 }
+
+impl<T> Node<T> {
+    pub fn new(elem: T) -> Rc<RefCell<Self>> {
+        Rc::new(RefCell::new(Node{
+            elem: elem,
+            next: None,
+            prev: None
+        }))
+    }
+}
