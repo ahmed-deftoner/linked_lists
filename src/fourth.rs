@@ -110,6 +110,11 @@ impl<T> List<T> {
         })
     }
     
+    pub fn peek_back_mutt(&mut self) -> Option<RefMut<T>> {
+        self.tail.as_ref().map(|node| {
+            RefMut::map(node.borrow_mut(), |node| &mut node.elem)
+        })
+    }
 }
 
 #[cfg(test)]
