@@ -46,6 +46,21 @@ impl<T> List<T> {
         }
     }
 
+    pub fn push_back(&mut self, elem: T) {
+        let new_node = Node::new(elem);
+        match self.tail.take() {
+            Some(old_tail) => {
+                old_tail.borrow_mut().next = Some(new_node.clone());
+                new_node.borrow_mut().prev = Some(old_tail);
+                self.tail = Some(new_node);
+            },
+            None => {
+                self.head = Some(new_node.clone());
+                self.tail = Some(new_node);
+            }
+        }
+    }
+
     
     pub fn pop_front(&mut self) -> Option<T> {
         self.head.take().map(|old_head| {
