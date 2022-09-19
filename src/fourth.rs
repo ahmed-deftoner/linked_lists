@@ -97,6 +97,14 @@ impl<T> List<T> {
             Ref::map(node.borrow(), |node| &node.elem)
         })
     }
+
+    pub fn peek_back(&self) -> Option<Ref<T>> {
+        self.tail.as_ref().map(|node| {
+            Ref::map(node.borrow(), |node| &node.elem)
+        })
+    }
+
+    
     
 }
 
